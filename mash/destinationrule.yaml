@@ -1,0 +1,17 @@
+apiVersion: networking.istio.io/v1beta1
+kind: DestinationRule
+metadata:
+  name: cool-destination-rule
+spec:
+  host: service-lol
+  trafficPolicy:
+    loadBalancer:
+      simple: LEAST_CONN
+    connectionPool:
+      tcp:
+        maxConnections: 3
+      http:
+        h2UpgradePolicy: DEFAULT
+        http1MaxPendingRequests: 5
+    tls:
+      mode: ISTIO_MUTUAL

@@ -1,0 +1,52 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: lol
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: lol
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: lol
+      annotations:
+        config-hash: ""
+    spec:
+      containers:
+        - name: loki
+          image: lol
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8080
+          envFrom:
+            - configMapRef:
+                name: superslon
+          resources:
+            limits:
+              cpu: 10m
+              memory: 64Mi
+            requests:
+              cpu: 10m
+              memory: 64Mi
+          volumeMounts:
+            - name: logs
+              mountPath: /app/logs
+            - name: config-volume
+              mountPath: /app/config
+              readOnly: true
+      volumes:
+        - name: logs
+          hostPath:
+            path: /daemon-set-volume
+        - name: config-volume
+          configMap:
+            name: superslon
+...

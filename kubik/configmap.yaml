@@ -1,0 +1,9 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: superslon
+data:
+  port: "8080"
+  message: "Welcome to the custom app"
+...

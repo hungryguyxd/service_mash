@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: log-agent
+spec:
+  selector:
+    matchLabels:
+      app: log-agent
+  template:
+    metadata:
+      labels:
+        app: log-agent
+    spec:
+      containers:
+        - name: log-agent
+          image: busybox
+          args:
+            - /bin/sh
+            - -c
+            - |
+              while true; do
+                echo "логи логи логи логи логи"
+                find /logs -type f -exec cat {} \;
+                sleep 4
+              done
+          volumeMounts:
+            - name: logs
+              mountPath: /logs
+      volumes:
+        - name: logs
+          hostPath:
+            path: /daemon-set-volume
+...

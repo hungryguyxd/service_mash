@@ -1,0 +1,29 @@
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: sloncronjob
+spec:
+  schedule: "*/10 * * * *"
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  concurrencyPolicy: Allow
+  jobTemplate:
+    spec:
+      backoffLimit: 2
+      activeDeadlineSeconds: 80
+      template:
+        spec:
+          containers:
+            - name: sloncronjob
+              image: curlimages/curl:latest
+              args:
+                - /bin/sh
+                - -c
+                - |
+                  mkdir -p /tmp/logs
+                  curl http://service-lol/logs > /tmp/logs/app.log
+                  tar -czf /tmp/app-logs-$(date +%s).tar.gz /tmp/logs
+                  echo CronjobEchoversion100
+          restartPolicy: Never
+...

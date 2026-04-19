@@ -1,0 +1,38 @@
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: lolpod
+  labels:
+    app: podik
+spec:
+  containers:
+    - name: app
+      image: lol
+      imagePullPolicy: Never
+      ports:
+        - containerPort: 8080
+      envFrom:
+        - configMapRef:
+            name: superslon
+      volumeMounts:
+        - name: logs
+          mountPath: /app/logs
+        - name: config-volume
+          mountPath: /app/config
+          readOnly: true
+      resources:
+        limits:
+          cpu: 10m
+          memory: 64Mi
+        requests:
+          cpu: 10m
+          memory: 64Mi
+  volumes:
+    - name: logs
+      hostPath:
+        path: /daemon-set-volume
+    - name: config-volume
+      configMap:
+        name: superslon
+...
